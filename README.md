@@ -1,6 +1,7 @@
 # CameraMotionDetection
 Python class that detects camera motion and record a video.
-Uses OpenCV 4 and Numpy.
+
+Uses OpenCV 4 and Numpy on Python 3.7.
 
 **Prototype :**
 
