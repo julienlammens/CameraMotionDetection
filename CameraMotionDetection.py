@@ -52,8 +52,8 @@ class MotionDetection(object):
             cv2.resizeWindow('Motion Detection', 640, 420)
 
         if self.show_mask:
-            cv2.namedWindow('Masque de mouvement', cv2.WINDOW_NORMAL)
-            cv2.resizeWindow('Masque de mouvement', 640, 420)
+            cv2.namedWindow('Motion Mask', cv2.WINDOW_NORMAL)
+            cv2.resizeWindow('Motion Mask', 640, 420)
 
     def get_dimensions(self, video_size):
         self.width, self.height = self.STD_DIMENSIONS['480p']
@@ -74,7 +74,7 @@ class MotionDetection(object):
             blur = cv2.GaussianBlur(frame, (19, 19), 0)
             mask = self.sub.apply(blur)
             if self.show_mask:
-                cv2.imshow("Masque de mouvement",mask)
+                cv2.imshow("Motion Mask",mask)
 
             # Creating numpy histogram to analyse the noise of the pixels
             img_temp = np.ones(frame.shape, dtype="uint8") * 255
