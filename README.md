@@ -5,7 +5,7 @@ Python class that detects camera motion and record a video.
 
 `class MotionDetection (string path, int video_source, string video_size, float threshold, int time_interval, int recording_time, boolean show_camera, boolean show_mask, boolean debug)`
 
-## Utilisation :
+## Usage :
 
 ```python
 # Instanciating the class
@@ -18,7 +18,7 @@ MD.start()
 MD.end()
 ```
 
-## Attributs :
+## Attributes :
 
 * `path` : Path of the directory to put the recorded files.
 * `video_source` : Numeric value of the video source (in order to choose the right camera). Begin with 0.
