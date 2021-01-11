@@ -1,5 +1,5 @@
-import cv2
 import numpy as np
+import cv2
 import time
 import datetime
 from threading import Thread
@@ -28,11 +28,12 @@ class MotionDetection(object):
         "4k": (3840, 2160),
     }
 
-    def __init__(self, path, video_source, video_size, threshold, time_interval, recording_time, show_camera, show_mask, debug):
+    def __init__(self, path, video_source, video_size, frame_rate, threshold, time_interval, recording_time, show_camera, show_mask, debug):
         self.video_source = video_source                # Source of the video
         self.video_size = video_size                    # Size of video
         self.get_dimensions(video_size)                 # Width and Height of camera
         self.threshold = threshold                      # Max noise threshold
+        self.frame_rate = frame_rate                    # Frame rate of the output video
         self.time_interval = time_interval              # Time interval between records in seconds
         self.recording_time = recording_time            # Duration of the video recorded if motion detected
         self.path = path                                # Recorded file saving path
@@ -89,16 +90,19 @@ class MotionDetection(object):
             if hist[255] > self.threshold and not self.is_recording and time.time() - self.time_counter > self.time_interval:
                 print("Motion detected! Recording video...")
                 self.is_recording = True
-                record_thread = Thread(target=self.record_video)
-                record_thread.start()
+                if not self.show_mask and not self.show_camera:
+                    self.record_video()
+                else:
+                    record_thread = Thread(target=self.record_video)
+                    record_thread.start()
             if cv2.waitKey(100) == 13:
                 break
 
     # Recording thread
     def record_video(self):
         date = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        fourcc = cv2.VideoWriter_fourcc(*'H264')
-        out = cv2.VideoWriter(self.path + '\\' + date+'.mp4', fourcc, 29.0, self.STD_DIMENSIONS[self.video_size])
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter(self.path + '/' + date+'.avi', fourcc, self.frame_rate, self.STD_DIMENSIONS[self.video_size])
         time_counter = time.time()
         while time.time() - time_counter < self.recording_time and self.cap.isOpened():
             ret, frame = self.cap.read()
@@ -106,7 +110,8 @@ class MotionDetection(object):
                 out.write(frame)
             else:
                 break
-        print("Video recorded: " + self.path + '\\' + date + '.mp4')
+            cv2.waitKey(int(self.recording_time / self.frame_rate*100))
+        print("Video recorded: " + self.path + '/' + date + '.mp4')
         self.time_counter = time.time()
         self.is_recording = False
 
@@ -115,6 +120,6 @@ class MotionDetection(object):
         cv2.destroyAllWindows()
 
 
-MD = MotionDetection("D:\\Projets\\borneGonflage\\local", 1, '1080p', 15000, 5, 1, True, True, False)
+MD = MotionDetection("test", 0, '720p', 24.0, 20000, 5, 5, False, False, False)
 MD.start()
 MD.end()
